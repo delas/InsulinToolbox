@@ -69,7 +69,7 @@ public class DataPoint {
 		if (getActivity() == null) {
 			return "Data point, " + date + " " + numericAttributes + " - " + stringAttributes;
 		} else {
-			return "Manual activity, " + getActivity() + ", " + date + " " + numericAttributes + " - " + stringAttributes;
+			return getActivity() + ", " + date + " " + numericAttributes + " - " + stringAttributes;
 		}	
 	}
 

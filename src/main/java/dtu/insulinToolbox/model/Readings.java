@@ -54,13 +54,107 @@ public class Readings extends LinkedList<DataPoint> {
 	}
 
 	public Double getClosestReading(DataPoint reference) {
+		// check before
+		Date dateBefore = null;
+		Double glucoseBefore = 0d;
 		for (int i = indexOf(reference); i >= 0; i--) {
-			Double glucose = get(i).getAttribute("glucose");
+			DataPoint dp = get(i);
+			Double glucose = dp.getAttribute("glucose");
 			if (glucose != null) {
-				return glucose;
+				glucoseBefore = glucose;
+				dateBefore = dp.getDate();
+				break;
+			}
+		}
+		// check after
+		Date dateAfter = null;
+		Double glucoseAfter = 0d;
+		for (int i = indexOf(reference); i < size(); i++) {
+			DataPoint dp = get(i);
+			Double glucose = dp.getAttribute("glucose");
+			if (glucose != null) {
+				glucoseAfter = glucose;
+				dateAfter = dp.getDate();
+				break;
+			}
+		}
+		
+		// comparison
+		if (dateAfter != null && dateBefore != null) {
+			long minutesBefore = (reference.getDate().getTime() - dateBefore.getTime()) / (60 * 1000);
+			long minutesAfter = (dateAfter.getTime() - reference.getDate().getTime()) / (60 * 1000);
+			if (minutesBefore < minutesAfter) {
+				return glucoseBefore;
+			} else {
+				return glucoseAfter;
+			}
+		} else {
+			if (dateAfter != null) {
+				return glucoseAfter;
+			}
+			if (dateBefore != null) {
+				return glucoseBefore;
 			}
 		}
 		return 0d;
+	}
+	
+	public DataPoint getClosestInsulin(DataPoint reference) {
+		// check before
+		Date dateBefore = null;
+		DataPoint pointBefore = null;
+		for (int i = indexOf(reference); i >= 0; i--) {
+			DataPoint dp = get(i);
+			String name = dp.getActivity();
+			if (DataPoint.ACTIVITY_NAME_RAPID_INSULIN.equals(name)) {
+				pointBefore = dp;
+				dateBefore = dp.getDate();
+				break;
+			}
+		}
+		// check after
+		Date dateAfter = null;
+		DataPoint pointAfter = null;
+		for (int i = indexOf(reference); i < size(); i++) {
+			DataPoint dp = get(i);
+			String name = dp.getActivity();
+			if (DataPoint.ACTIVITY_NAME_RAPID_INSULIN.equals(name)) {
+				pointAfter = dp;
+				dateAfter = dp.getDate();
+				break;
+			}
+		}
+		
+		// comparison
+		if (dateAfter != null && dateBefore != null) {
+			long minutesBefore = (reference.getDate().getTime() - dateBefore.getTime()) / (60 * 1000);
+			long minutesAfter = (dateAfter.getTime() - reference.getDate().getTime()) / (60 * 1000);
+			if (minutesBefore < minutesAfter) {
+				return pointBefore;
+			} else {
+				return pointAfter;
+			}
+		} else {
+			if (dateAfter != null) {
+				return pointAfter;
+			}
+			if (dateBefore != null) {
+				return pointBefore;
+			}
+		}
+		return null;
+	}
+	
+	public int countActivity(String ...activityNames) {
+		int count = 0;
+		for (DataPoint dp : this) {
+			for (String activityName : activityNames) {
+				if (activityName.equals(dp.getActivity())) {
+					return count;
+				}
+			}
+		}
+		return count;
 	}
 
 	public boolean hasActivity(String ...activityNames) {
