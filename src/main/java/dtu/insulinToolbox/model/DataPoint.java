@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class DataPoint {
 
@@ -20,7 +21,7 @@ public class DataPoint {
 	private Map<String, String> stringAttributes;
 	
 	public DataPoint(Date date) {
-		this.id = UUID.generateRandom();
+		this.id = UUID.randomUUID();
 		this.date = date;
 		this.numericAttributes = new HashMap<String, Double>();
 		this.stringAttributes = new HashMap<String, String>();
@@ -35,7 +36,7 @@ public class DataPoint {
 		return date;
 	}
 
-	public String getActivty() {
+	public String getActivity() {
 		return getStringAttribute(ACTIVITY_ATTRIBUTE_NAME);
 	}
 	
@@ -68,14 +69,14 @@ public class DataPoint {
 		if (getActivity() == null) {
 			return "Data point, " + date + " " + numericAttributes + " - " + stringAttributes;
 		} else {
-			return "Manual activity, " + getActivty() + ", " + date + " " + numericAttributes + " - " + stringAttributes;
+			return "Manual activity, " + getActivity() + ", " + date + " " + numericAttributes + " - " + stringAttributes;
 		}	
 	}
 
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof DataPoint) {
-			return id.equals((DataPoint) other.id);
+			return id.equals(((DataPoint) other).id);
 		}
 		return false;
 	}

@@ -14,7 +14,6 @@ import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 
 import dtu.insulinToolbox.model.DataPoint;
-import dtu.insulinToolbox.model.ManualActivity;
 import dtu.insulinToolbox.model.Readings;
 
 public class FreeStyleLibreReader {

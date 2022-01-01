@@ -5,6 +5,7 @@ import java.text.ParseException;
 
 import com.opencsv.exceptions.CsvValidationException;
 
+import dtu.insulinToolbox.model.DataPoint;
 import dtu.insulinToolbox.model.Readings;
 import dtu.insulinToolbox.reader.FreeStyleLibreReader;
 
@@ -16,13 +17,13 @@ public class InsulinToolbox {
 		Readings readings = reader.read();
 		
 		for (DataPoint dp : readings.getAllWithActivityName(DataPoint.ACTIVITY_NAME_RAPID_INSULIN)) {
-			boolean hadEatingCorrectionAfter = readings.hasActivityBefore(dp, 45,
+			boolean hadEatingCorrectionBefore = readings.hasActivityBefore(dp, 45,
 				DataPoint.ACTIVITY_NAME_EATING,
 				DataPoint.ACTIVITY_NAME_LONG_LASTING_INSULIN);
 			boolean hadEatingCorrectionAfter = readings.hasActivityAfter(dp, 180,
 				DataPoint.ACTIVITY_NAME_EATING,
 				DataPoint.ACTIVITY_NAME_LONG_LASTING_INSULIN);
-			if (!hadEatingCorrectionAfter && !hadEatingCorrectionAfter) {
+			if (!hadEatingCorrectionBefore && !hadEatingCorrectionAfter) {
 				Double current = readings.getClosestReading(dp);
 				Double insulin = dp.getAttribute("units");
 				System.out.println("Candidate correction at " + dp.getDate());

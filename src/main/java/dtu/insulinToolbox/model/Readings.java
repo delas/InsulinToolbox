@@ -1,7 +1,9 @@
 package dtu.insulinToolbox.model;
 
+import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
+
+import org.apache.commons.lang3.time.DateUtils;
 
 public class Readings extends LinkedList<DataPoint> {
 
@@ -18,7 +20,7 @@ public class Readings extends LinkedList<DataPoint> {
 	}
 	
 	public Readings getAllWithActivityName(String activity) {
-		return getAllWithStringAttributeEqualsTo(ManualActivity.ACTIVITY_ATTRIBUTE_NAME, activity);
+		return getAllWithStringAttributeEqualsTo(DataPoint.ACTIVITY_ATTRIBUTE_NAME, activity);
 	}
 
 	public Readings getAllInTimeFrame(Date start, Date end) {
@@ -58,13 +60,13 @@ public class Readings extends LinkedList<DataPoint> {
 				return glucose;
 			}
 		}
-		return 0;
+		return 0d;
 	}
 
 	public boolean hasActivity(String ...activityNames) {
 		for (DataPoint dp : this) {
 			for (String activityName : activityNames) {
-				if (activityName.equals(dp.getActivityName())) {
+				if (activityName.equals(dp.getActivity())) {
 					return true;
 				}
 			}
@@ -81,8 +83,8 @@ public class Readings extends LinkedList<DataPoint> {
 	}
 
 	public Double getAverageGlucose() {
-		int i = 0;
-		Double totalGlucose = 0;
+		double i = 0;
+		double totalGlucose = 0d;
 		for (DataPoint dp : this) {
 			Double glucose = dp.getAttribute("glucose");
 			if (glucose != null) {
