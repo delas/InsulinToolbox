@@ -26,7 +26,7 @@ public class Readings extends LinkedList<DataPoint> {
 	public Readings getAllInTimeFrame(Date start, Date end) {
 		Readings toReturn = new Readings();
 		for (DataPoint dp : this) {
-			if (dp.getDate().after(start) && dp.getDate().before(end)) {
+			if ((dp.getDate().equals(start) || dp.getDate().equals(end)) || (dp.getDate().after(start) && dp.getDate().before(end))) {
 				toReturn.add(dp);
 			}
 		}
@@ -49,8 +49,8 @@ public class Readings extends LinkedList<DataPoint> {
 
 	public Readings getBefore(DataPoint reference, int offsetBefore, int minutesDuration) {
 		return getAllInTimeFrame(
-			DateUtils.addMinutes(reference.getDate(), -offsetBefore),
-			DateUtils.addMinutes(reference.getDate(), -offsetBefore-minutesDuration));
+			DateUtils.addMinutes(reference.getDate(), -offsetBefore-minutesDuration),
+			DateUtils.addMinutes(reference.getDate(), -offsetBefore));
 	}
 
 	public Double getClosestReading(DataPoint reference) {
