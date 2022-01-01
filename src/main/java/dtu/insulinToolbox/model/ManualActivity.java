@@ -4,20 +4,20 @@ import java.util.Date;
 
 public class ManualActivity extends DataPoint {
 
-	private String activity;
+	public static final String ACTIVITY_ATTRIBUTE_NAME = "activity-name";
 	
 	public ManualActivity(Date date, String activity) {
 		super(date);
-		this.activity = activity;
+		setStringAttribute(ACTIVITY_ATTRIBUTE_NAME, activity);
 	}
 
 	public String getActivty() {
-		return activity;
+		return getStringAttribute(ACTIVITY_ATTRIBUTE_NAME);
 	}
 	
 
 	@Override
 	public String toString() {
-		return "Manual activity, " + activity + ", " + date + " " + numericAttributes + " - " + stringAttributes;
+		return "Manual activity, " + getActivty() + ", " + date + " " + numericAttributes + " - " + stringAttributes;
 	}
 }
