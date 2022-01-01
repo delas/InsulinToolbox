@@ -74,16 +74,16 @@ public class FreeStyleLibreReader {
 	private static DataPoint parseManualActivity(Date date, String scan, String rapidInsulin, String longlastingInsulin, String carbs) {
 		DataPoint dp = null;
 		if (!"".equals(scan)) {
-			dp = new ManualActivity(date, "scan");
+			dp = new DataPoint(date, DataPoint.ACTIVITY_NAME_SCAN);
 			dp.setAttribute("glucose", Double.parseDouble(scan));
 		} else if (!"".equals(rapidInsulin)) {
-			dp = new ManualActivity(date, "rapid-acting-insulin");
+			dp = new DataPoint(date, DataPoint.ACTIVITY_NAME_RAPID_INSULIN);
 			dp.setAttribute("units", Double.parseDouble(rapidInsulin));
 		} else if (!"".equals(longlastingInsulin)) {
-			dp = new ManualActivity(date, "long-lasting-insulin");
+			dp = new DataPoint(date, DataPoint.ACTIVITY_NAME_LONG_LASTING_INSULIN);
 			dp.setAttribute("units", Double.parseDouble(longlastingInsulin));
 		} else if (!"".equals(carbs)) {
-			dp = new ManualActivity(date, "eating");
+			dp = new DataPoint(date, DataPoint.ACTIVITY_NAME_EATING);
 			dp.setAttribute("carbs", Double.parseDouble(carbs));
 		} else {
 			return null;

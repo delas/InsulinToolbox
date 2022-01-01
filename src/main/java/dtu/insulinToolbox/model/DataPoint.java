@@ -7,18 +7,36 @@ import java.util.Set;
 
 public class DataPoint {
 
-	protected Date date;
-	protected Map<String, Double> numericAttributes;
-	protected Map<String, String> stringAttributes;
+	public static final String ACTIVITY_ATTRIBUTE_NAME = "activity-name";
+
+	public static final String ACTIVITY_NAME_EATING = "eating";
+	public static final String ACTIVITY_NAME_LONG_LASTING_INSULIN = "long-lasting-insulin";
+	public static final String ACTIVITY_NAME_RAPID_INSULIN = "rapid-acting-insulin";
+	public static final String ACTIVITY_NAME_SCAN = "scan";
+
+	private UUID id;
+	private Date date;
+	private Map<String, Double> numericAttributes;
+	private Map<String, String> stringAttributes;
 	
 	public DataPoint(Date date) {
+		this.id = UUID.generateRandom();
 		this.date = date;
 		this.numericAttributes = new HashMap<String, Double>();
 		this.stringAttributes = new HashMap<String, String>();
 	}
+
+	public DataPoint(Date date, String activity) {
+		this(date);
+		setStringAttribute(ACTIVITY_ATTRIBUTE_NAME, activity);
+	}
 	
 	public Date getDate() {
 		return date;
+	}
+
+	public String getActivty() {
+		return getStringAttribute(ACTIVITY_ATTRIBUTE_NAME);
 	}
 	
 	public Set<String> getAttributeNames() {
@@ -47,6 +65,18 @@ public class DataPoint {
 	
 	@Override
 	public String toString() {
-		return "Data point, " + date + " " + numericAttributes + " - " + stringAttributes;
+		if (getActivity() == null) {
+			return "Data point, " + date + " " + numericAttributes + " - " + stringAttributes;
+		} else {
+			return "Manual activity, " + getActivty() + ", " + date + " " + numericAttributes + " - " + stringAttributes;
+		}	
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		if (other instanceof DataPoint) {
+			return id.equals((DataPoint) other.id);
+		}
+		return false;
 	}
 }
