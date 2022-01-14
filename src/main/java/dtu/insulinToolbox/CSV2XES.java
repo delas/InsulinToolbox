@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import org.deckfour.xes.classification.XEventNameClassifier;
 import org.deckfour.xes.extension.std.XConceptExtension;
@@ -27,6 +29,9 @@ import dtu.insulinToolbox.reader.FreeStyleLibreReader;
 
 public class CSV2XES {
 
+	public static final Double THRESHOLD_HYPER = 10d;
+	public static final Double THRESHOLD_HYPO = 4d;
+	
 	private static final SimpleDateFormat CASE_ID_FORMAT = new SimpleDateFormat("YMMdd");
 	private static XFactory xesFactory = new XFactoryNaiveImpl();
 	
@@ -43,12 +48,43 @@ public class CSV2XES {
 
 		System.out.println("Constructing raw log...");
 		Map<String, LinkedList<DataPoint>> logNoFormat = new HashMap<String, LinkedList<DataPoint>>();
+		Set<String> signaledHyper = new HashSet<String>();
+		Set<String> signaledHypo = new HashSet<String>();
 		for (DataPoint dp : readings) {
-			if (dp.getActivity() != null) {
-				String caseId = CASE_ID_FORMAT.format(dp.getDate());
-				if (!logNoFormat.containsKey(caseId)) {
-					logNoFormat.put(caseId, new LinkedList<DataPoint>());
+			String caseId = CASE_ID_FORMAT.format(dp.getDate());
+			if (!logNoFormat.containsKey(caseId)) {
+				logNoFormat.put(caseId, new LinkedList<DataPoint>());
+			}
+			
+			if (dp.getActivity() == null) {
+				Double glucose = dp.getGlucose();
+				// hyper
+				if (glucose >= THRESHOLD_HYPER) {
+					if (!signaledHyper.contains(caseId)) {
+						DataPoint dp2 = new DataPoint(dp.getDate(), "hyper-started");
+						dp2.setGlucose(glucose);
+						logNoFormat.get(caseId).add(dp2);
+						signaledHyper.add(caseId);
+					}
 				}
+				if (glucose < THRESHOLD_HYPER && signaledHyper.contains(caseId)) {
+					signaledHyper.remove(caseId);
+				}
+				
+				// hypo
+				if (glucose <= THRESHOLD_HYPO) {
+					if (!signaledHypo.contains(caseId)) {
+						DataPoint dp2 = new DataPoint(dp.getDate(), "hypo-started");
+						dp2.setGlucose(glucose);
+						logNoFormat.get(caseId).add(dp2);
+						signaledHypo.add(caseId);
+					}
+				}
+				if (glucose > THRESHOLD_HYPO && signaledHypo.contains(caseId)) {
+					signaledHypo.remove(caseId);
+				}
+				
+			} else {
 				logNoFormat.get(caseId).add(dp);
 			}
 		}

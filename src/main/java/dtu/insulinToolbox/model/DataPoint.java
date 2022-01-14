@@ -14,6 +14,10 @@ public class DataPoint {
 	public static final String ACTIVITY_NAME_LONG_LASTING_INSULIN = "long-lasting-insulin";
 	public static final String ACTIVITY_NAME_RAPID_INSULIN = "rapid-acting-insulin";
 	public static final String ACTIVITY_NAME_SCAN = "scan";
+	
+	public static final String ATTRIBUTE_NAME_GLUCOSE = "glucose";
+	public static final String ATTRIBUTE_NAME_UNITS = "units";
+	public static final String ATTRIBUTE_NAME_CARBS = "carbs";
 
 	private UUID id;
 	private Date date;
@@ -42,6 +46,14 @@ public class DataPoint {
 	
 	public Set<String> getAttributeNames() {
 		return numericAttributes.keySet();
+	}
+	
+	public Double getGlucose() {
+		return getAttribute(ATTRIBUTE_NAME_GLUCOSE);
+	}
+	
+	public void setGlucose(Double value) {
+		setAttribute(ATTRIBUTE_NAME_GLUCOSE, value);
 	}
 	
 	public Double getAttribute(String name) {
@@ -79,5 +91,10 @@ public class DataPoint {
 			return id.equals(((DataPoint) other).id);
 		}
 		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		return id.hashCode();
 	}
 }

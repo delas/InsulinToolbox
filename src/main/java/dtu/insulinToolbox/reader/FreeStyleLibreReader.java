@@ -57,7 +57,19 @@ public class FreeStyleLibreReader {
 		Collections.sort(readings, new Comparator<DataPoint>() {
 			@Override
 			public int compare(DataPoint o1, DataPoint o2) {
-				return o1.getDate().compareTo(o2.getDate());
+				int dateComparison = o1.getDate().compareTo(o2.getDate());
+				if (dateComparison == 0) {
+					String a1 = o1.getActivity();
+					String a2 = o2.getActivity();
+					if (a1 == null && a2 == null) {
+						return 0;
+					} else if (DataPoint.ACTIVITY_NAME_EATING.equals(a2)) {
+						return -1;
+					} else {
+						return 1;
+					}
+				}
+				return dateComparison;
 			}
 		});
 		
@@ -66,7 +78,7 @@ public class FreeStyleLibreReader {
 	
 	private static DataPoint parseAutomaticReading(Date date, String glucose) {
 		DataPoint dp = new DataPoint(date);
-		dp.setAttribute("glucose", Double.parseDouble(glucose));
+		dp.setGlucose(Double.parseDouble(glucose));
 		return dp;
 	}
 	
@@ -74,16 +86,16 @@ public class FreeStyleLibreReader {
 		DataPoint dp = null;
 		if (!"".equals(scan)) {
 			dp = new DataPoint(date, DataPoint.ACTIVITY_NAME_SCAN);
-			dp.setAttribute("glucose", Double.parseDouble(scan));
+			dp.setGlucose(Double.parseDouble(scan));
 		} else if (!"".equals(rapidInsulin)) {
 			dp = new DataPoint(date, DataPoint.ACTIVITY_NAME_RAPID_INSULIN);
-			dp.setAttribute("units", Double.parseDouble(rapidInsulin));
+			dp.setAttribute(DataPoint.ATTRIBUTE_NAME_UNITS, Double.parseDouble(rapidInsulin));
 		} else if (!"".equals(longlastingInsulin)) {
 			dp = new DataPoint(date, DataPoint.ACTIVITY_NAME_LONG_LASTING_INSULIN);
-			dp.setAttribute("units", Double.parseDouble(longlastingInsulin));
+			dp.setAttribute(DataPoint.ATTRIBUTE_NAME_UNITS, Double.parseDouble(longlastingInsulin));
 		} else if (!"".equals(carbs)) {
 			dp = new DataPoint(date, DataPoint.ACTIVITY_NAME_EATING);
-			dp.setAttribute("carbs", Double.parseDouble(carbs));
+			dp.setAttribute(DataPoint.ATTRIBUTE_NAME_CARBS, Double.parseDouble(carbs));
 		} else {
 			return null;
 		}

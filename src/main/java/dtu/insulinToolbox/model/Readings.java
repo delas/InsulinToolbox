@@ -54,12 +54,16 @@ public class Readings extends LinkedList<DataPoint> {
 	}
 
 	public Double getClosestReading(DataPoint reference) {
+		if (reference.getGlucose() != null) {
+			return reference.getGlucose();
+		}
+		
 		// check before
 		Date dateBefore = null;
 		Double glucoseBefore = 0d;
 		for (int i = indexOf(reference); i >= 0; i--) {
 			DataPoint dp = get(i);
-			Double glucose = dp.getAttribute("glucose");
+			Double glucose = dp.getGlucose();
 			if (glucose != null) {
 				glucoseBefore = glucose;
 				dateBefore = dp.getDate();
@@ -71,7 +75,7 @@ public class Readings extends LinkedList<DataPoint> {
 		Double glucoseAfter = 0d;
 		for (int i = indexOf(reference); i < size(); i++) {
 			DataPoint dp = get(i);
-			Double glucose = dp.getAttribute("glucose");
+			Double glucose = dp.getGlucose();
 			if (glucose != null) {
 				glucoseAfter = glucose;
 				dateAfter = dp.getDate();
